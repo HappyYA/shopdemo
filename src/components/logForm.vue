@@ -12,15 +12,15 @@
       <div class="form-input">
         <input type="password" v-model="userPwd" placeholder="请填入密码">
       </div>
-      <span class="form-error"></span>
+      <span class="form-error">{{userPwdError.errorText}}</span>
     </div>
     <div class="form-line">
       <span class="form-label"></span>
       <div class="form-btn">
-        <button>登录</button>
+        <button @click="toLog">登录</button>
       </div>
     </div>
-    <span>登录失败</span>
+    <span v-show="errorFlag" :style="errorStyle">{{logText}}</span>
   </div>
 </template>
 
@@ -29,7 +29,12 @@
     data() {
       return {
         userName: '',
-        userPwd: ''
+        userPwd: '',
+        errorFlag:false,
+        logText:'登录成功,正在跳转。。。。',
+        errorStyle:{
+          color:'red'
+        }
       }
     },
     computed: {
@@ -47,6 +52,35 @@
           this.userFlag=true
         }
         return {status,errorText}
+      },
+      userPwdError(){
+        let errorText,status
+        if(!/^\w{1,6}$/g.test(this.userPwd)){
+          status=false
+          errorText='密码不是1到六位'
+        }else{
+          status=true
+          errorText=''
+        }
+        if(!this.pwdFlag){
+          errorText=''
+          this.pwdFlag=true
+        }
+        return {status,errorText}
+      }
+    },
+    methods: {
+      toLog() {
+        if(this.userNameError.status&&this.userPwdError.status){
+          this.errorFlag=true
+          this.logText = '登录成功'
+          this.errorStyle={
+            color:'green'
+          }
+        }else{
+          this.errorFlag=true
+          this.logText = "登录失败"
+        }
       }
     },
   }
